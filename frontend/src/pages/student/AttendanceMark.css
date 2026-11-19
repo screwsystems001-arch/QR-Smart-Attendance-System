@@ -1,0 +1,97 @@
+.attendance-mark-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    background: #f3f6fb;
+}
+
+.attendance-mark-card {
+    width: 100%;
+    max-width: 480px;
+    padding: 36px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.back-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: transparent;
+    color: #475569;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 30px;
+}
+
+.location-icon {
+    color: #2563eb;
+    margin-bottom: 12px;
+}
+
+.attendance-mark-card h1 {
+    color: #172554;
+    font-size: 28px;
+    margin-bottom: 12px;
+}
+
+.attendance-mark-card p {
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.mark-button,
+.dashboard-button {
+    width: 100%;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #2563eb;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.mark-button:hover,
+.dashboard-button:hover {
+    background: #1d4ed8;
+}
+
+.mark-button:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+.attendance-success,
+.attendance-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px;
+    margin-top: 22px;
+    border-radius: 10px;
+    text-align: left;
+    line-height: 1.5;
+}
+
+.attendance-success {
+    color: #166534;
+    background: #dcfce7;
+}
+
+.attendance-error {
+    color: #991b1b;
+    background: #fee2e2;
+}
+
+.dashboard-button {
+    margin-top: 18px;
+}

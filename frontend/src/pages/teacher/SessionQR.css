@@ -1,0 +1,160 @@
+.session-qr-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+    background: #f3f6fb;
+}
+
+.session-qr-card {
+    width: 100%;
+    max-width: 520px;
+    padding: 35px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.session-qr-back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: transparent;
+    color: #475569;
+    cursor: pointer;
+    margin-bottom: 25px;
+}
+
+.session-qr-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 18px;
+    border-radius: 12px;
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.session-qr-card h1 {
+    color: #172554;
+    font-size: 26px;
+    margin-bottom: 10px;
+}
+
+.session-qr-description {
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 25px;
+}
+
+.session-qr-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    color: #2563eb;
+    padding: 25px;
+}
+
+.session-qr-image-container {
+    padding: 20px;
+    margin-bottom: 22px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+}
+
+.session-qr-image-container img {
+    display: block;
+    width: 280px;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto 15px;
+}
+
+.session-qr-image-container p {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.session-id-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px;
+    margin-bottom: 20px;
+    border-radius: 9px;
+    background: #f1f5f9;
+    text-align: left;
+}
+
+.session-id-container strong {
+    color: #334155;
+    font-size: 13px;
+}
+
+.session-id-container span {
+    color: #64748b;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.close-session-button,
+.retry-qr-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 9px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.close-session-button {
+    background: #dc2626;
+}
+
+.close-session-button:hover {
+    background: #b91c1c;
+}
+
+.close-session-button:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+.retry-qr-button {
+    background: #2563eb;
+}
+
+.session-qr-error,
+.session-qr-success {
+    padding: 12px;
+    margin: 15px 0;
+    border-radius: 8px;
+    line-height: 1.5;
+}
+
+.session-qr-error {
+    color: #991b1b;
+    background: #fee2e2;
+}
+
+.session-qr-success {
+    color: #166534;
+    background: #dcfce7;
+}
+
+@media (max-width: 600px) {
+    .session-qr-card {
+        padding: 24px 18px;
+    }
+}

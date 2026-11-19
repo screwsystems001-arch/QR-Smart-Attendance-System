@@ -1,0 +1,137 @@
+.mark-attendance-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    background: #f3f6fb;
+}
+
+.mark-attendance-card {
+    width: 100%;
+    max-width: 480px;
+    padding: 35px;
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.attendance-back-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: transparent;
+    color: #475569;
+    cursor: pointer;
+    margin-bottom: 30px;
+}
+
+.attendance-location-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 65px;
+    height: 65px;
+    margin: 0 auto 18px;
+    border-radius: 15px;
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.mark-attendance-card h1 {
+    color: #172554;
+    font-size: 27px;
+    margin-bottom: 12px;
+}
+
+.attendance-description {
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 22px;
+}
+
+.attendance-session-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px;
+    margin-bottom: 22px;
+    border-radius: 9px;
+    background: #f1f5f9;
+    text-align: left;
+}
+
+.attendance-session-info strong {
+    color: #334155;
+    font-size: 13px;
+}
+
+.attendance-session-info span {
+    color: #64748b;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.mark-attendance-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 9px;
+    background: #2563eb;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.mark-attendance-button:hover {
+    background: #1d4ed8;
+}
+
+.mark-attendance-button:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+.attendance-result {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px;
+    margin-bottom: 20px;
+    border-radius: 9px;
+    text-align: left;
+    line-height: 1.5;
+}
+
+.attendance-result.success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.attendance-result.error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.attendance-result p {
+    margin: 0;
+}
+
+.attendance-note {
+    margin-top: 18px;
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+@media (max-width: 600px) {
+    .mark-attendance-card {
+        padding: 25px 18px;
+    }
+}
