@@ -33,6 +33,13 @@ export default function TeacherDashboard() {
     const [subjectCode, setSubjectCode] = useState("");
     const [creatingSubject, setCreatingSubject] = useState(false);
     const [success, setSuccess] = useState("");
+    const [enrollmentSubject, setEnrollmentSubject] = useState(null);
+    const [students, setStudents] = useState([]);
+    const [selectedStudents, setSelectedStudents] = useState([]);
+    const [loadingStudents, setLoadingStudents] = useState(false);
+    const [enrollingStudents, setEnrollingStudents] = useState(false);
+    const [enrollmentMessage, setEnrollmentMessage] = useState("");
+    const [enrollmentError, setEnrollmentError] = useState("");
 
     async function getAuthHeaders() {
         const {
@@ -73,6 +80,108 @@ export default function TeacherDashboard() {
             setLoading(false);
         }
     }
+    const loadStudentsForSubject = async (subject) => {
+        setLoadingStudents(true);
+
+        try {
+            const headers = await getAuthHeaders();
+
+            const response = await fetch(
+                `${API_BASE_URL}/subjects/${subject.id}/students`,
+                { headers }
+            );
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || "Failed to load students.");
+            }
+
+            setStudents(result.students || []);
+            return true;
+        } catch (err) {
+            setEnrollmentError(err.message);
+            return false;
+        } finally {
+            setLoadingStudents(false);
+        }
+    };
+
+    const openEnrollment = async (subject) => {
+        setEnrollmentSubject(subject);
+        setStudents([]);
+        setSelectedStudents([]);
+        setEnrollmentMessage("");
+        setEnrollmentError("");
+
+        await loadStudentsForSubject(subject);
+    };
+
+    const toggleStudentSelection = (studentId, checked) => {
+        setSelectedStudents((previous) =>
+            checked
+                ? [...previous, studentId]
+                : previous.filter((id) => id !== studentId)
+        );
+    };
+
+    const handleEnrollSelected = async () => {
+        if (!enrollmentSubject || selectedStudents.length === 0) {
+            return;
+        }
+
+        setEnrollingStudents(true);
+        setEnrollmentMessage("");
+        setEnrollmentError("");
+
+        try {
+            const headers = await getAuthHeaders();
+
+            let enrolledCount = 0;
+            const failures = [];
+
+            for (const studentId of selectedStudents) {
+                try {
+                    const response = await fetch(
+                        `${API_BASE_URL}/subjects/${enrollmentSubject.id}/enrollments`,
+                        {
+                            method: "POST",
+                            headers,
+                            body: JSON.stringify({ student_id: studentId }),
+                        }
+                    );
+
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        enrolledCount++;
+                    } else {
+                        failures.push(result.message || "Enrollment failed.");
+                    }
+                } catch {
+                    failures.push("A student could not be enrolled due to a network error.");
+                }
+            }
+
+            setSelectedStudents([]);
+
+            await loadStudentsForSubject(enrollmentSubject);
+
+            if (enrolledCount > 0) {
+                setEnrollmentMessage(
+                    `${enrolledCount} student(s) enrolled successfully.`
+                );
+            }
+
+            if (failures.length > 0) {
+                setEnrollmentError(failures.join(" "));
+            }
+        } catch (err) {
+            setEnrollmentError(err.message);
+        } finally {
+            setEnrollingStudents(false);
+        }
+    };
 
     useEffect(() => {
         fetchSubjects();
@@ -253,7 +362,13 @@ export default function TeacherDashboard() {
 
                             <h3>{subject.name}</h3>
                             <p>Subject Code: {subject.subject_code}</p>
-
+                            <button
+                                className="enroll-students-button"
+                                onClick={() => openEnrollment(subject)}
+                            >
+                                <Users size={17} />
+                                Enroll Students
+                            </button>
                             <button
                                 onClick={() =>
                                     navigate("/teacher/create-session", {
@@ -288,6 +403,104 @@ export default function TeacherDashboard() {
                     ))}
                 </div>
             </section>
+            {enrollmentSubject && (
+                <div className="enrollment-modal-overlay">
+                    <div className="enrollment-modal">
+                        <div className="enrollment-modal-header">
+                            <div>
+                                <h2>Enroll Students</h2>
+                                <p>{enrollmentSubject.name}</p>
+                            </div>
+
+                            <button
+                                className="enrollment-close-button"
+                                onClick={() => setEnrollmentSubject(null)}
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <p className="enrollment-description">
+                            Select registered students to enroll in this subject.
+                        </p>
+
+                        {enrollmentMessage && (
+                            <div className="success-message">
+                                {enrollmentMessage}
+                            </div>
+                        )}
+
+                        {enrollmentError && (
+                            <div className="error-message">
+                                {enrollmentError}
+                            </div>
+                        )}
+
+                        {loadingStudents ? (
+                            <p className="enrollment-loading">Loading students...</p>
+                        ) : students.length === 0 ? (
+                            <p className="enrollment-empty">
+                                No registered students found.
+                            </p>
+                        ) : (
+                            <div className="enrollment-student-list">
+                                {students.map((student) => (
+                                    <label
+                                        className="enrollment-student-item"
+                                        key={student.user_id}
+                                    >
+                                        <div className="enrollment-student-info">
+                                            <input
+                                                type="checkbox"
+                                                checked={student.is_enrolled ||
+                                                    selectedStudents.includes(student.user_id)}
+                                                disabled={student.is_enrolled}
+                                                onChange={(e) =>
+                                                    toggleStudentSelection(
+                                                        student.user_id,
+                                                        e.target.checked
+                                                    )
+                                                }
+                                            />
+
+                                            <span>{student.full_name || "Unnamed Student"}</span>
+                                        </div>
+
+                                        {student.is_enrolled && (
+                                            <span className="enrolled-status">
+                                                Already Enrolled
+                                            </span>
+                                        )}
+                                    </label>
+                                ))}
+                            </div>
+                        )}
+
+                        <div className="enrollment-modal-footer">
+                            <button
+                                className="enrollment-cancel-button"
+                                onClick={() => setEnrollmentSubject(null)}
+                            >
+                                Close
+                            </button>
+
+                            <button
+                                className="enrollment-submit-button"
+                                onClick={handleEnrollSelected}
+                                disabled={
+                                    loadingStudents ||
+                                    enrollingStudents ||
+                                    selectedStudents.length === 0
+                                }
+                            >
+                                {enrollingStudents
+                                    ? "Enrolling..."
+                                    : `Enroll Selected (${selectedStudents.length})`}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </main>
     );
 }

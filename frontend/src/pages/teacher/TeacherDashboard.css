@@ -297,3 +297,182 @@
         width: 100%;
     }
 }
+
+/* Enroll Students Button */
+.enroll-students-button {
+    background: #059669;
+    color: white;
+    margin-bottom: 12px;
+}
+
+.enroll-students-button:hover {
+    background: #047857;
+}
+
+/* Enrollment Modal */
+.enrollment-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.65);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 1000;
+}
+
+.enrollment-modal {
+    background: #ffffff;
+    width: 100%;
+    max-width: 550px;
+    max-height: 85vh;
+    overflow-y: auto;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.enrollment-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 12px;
+}
+
+.enrollment-modal-header h2 {
+    color: #172554;
+    font-size: 23px;
+    margin-bottom: 5px;
+}
+
+.enrollment-modal-header p {
+    color: #64748b;
+    font-size: 14px;
+}
+
+.enrollment-close-button {
+    background: #f1f5f9;
+    color: #334155;
+    border: none;
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.enrollment-description {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.enrollment-student-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 350px;
+    overflow-y: auto;
+    margin: 15px 0;
+}
+
+.enrollment-student-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.enrollment-student-item:hover {
+    background: #f8fafc;
+}
+
+.enrollment-student-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #334155;
+    font-size: 14px;
+}
+
+.enrollment-student-info input {
+    width: 17px;
+    height: 17px;
+    accent-color: #2563eb;
+    cursor: pointer;
+}
+
+.enrolled-status {
+    color: #059669;
+    background: #ecfdf5;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.enrollment-loading,
+.enrollment-empty {
+    text-align: center;
+    color: #64748b;
+    padding: 30px 10px;
+}
+
+.enrollment-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.enrollment-cancel-button,
+.enrollment-submit-button {
+    border: none;
+    border-radius: 8px;
+    padding: 11px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.enrollment-cancel-button {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.enrollment-submit-button {
+    background: #2563eb;
+    color: white;
+}
+
+.enrollment-submit-button:hover {
+    background: #1d4ed8;
+}
+
+.enrollment-submit-button:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+    .enrollment-modal {
+        padding: 20px;
+    }
+
+    .enrollment-modal-footer {
+        flex-direction: column-reverse;
+    }
+
+    .enrollment-cancel-button,
+    .enrollment-submit-button {
+        width: 100%;
+    }
+
+    .enrollment-student-item {
+        align-items: flex-start;
+    }
+}

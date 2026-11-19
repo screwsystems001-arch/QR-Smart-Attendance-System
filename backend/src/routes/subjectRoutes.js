@@ -133,6 +133,102 @@ router.get("/", authenticateUser, async (req, res) => {
 });
 
 /**
+ * Get all registered students and their enrollment status
+ * for a subject. Only the subject's teacher can access this.
+ */
+router.get(
+    "/:id/students",
+    authenticateUser,
+    requireRole("teacher"),
+    async (req, res) => {
+        try {
+            const { id } = req.params;
+
+            // Verify that this subject belongs to the teacher.
+            const { data: subject, error: subjectError } = await adminClient
+                .from("subjects")
+                .select("id, teacher_id")
+                .eq("id", id)
+                .maybeSingle();
+
+            if (subjectError) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Could not verify subject ownership.",
+                });
+            }
+
+            if (!subject) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Subject not found.",
+                });
+            }
+
+            if (subject.teacher_id !== req.user.id) {
+                return res.status(403).json({
+                    success: false,
+                    message: "You cannot access another teacher's subject.",
+                });
+            }
+
+            // Fetch all registered student profiles.
+            const { data: students, error: studentsError } = await adminClient
+                .from("profiles")
+                .select("user_id, full_name")
+                .eq("role", "student")
+                .order("full_name");
+
+            if (studentsError) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Could not retrieve students.",
+                });
+            }
+
+            // Fetch students already enrolled in this subject.
+            const { data: enrollments, error: enrollmentError } =
+                await adminClient
+                    .from("enrollments")
+                    .select("student_id")
+                    .eq("subject_id", id);
+
+            if (enrollmentError) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Could not retrieve enrollment records.",
+                });
+            }
+
+            const enrolledStudentIds = new Set(
+                (enrollments || []).map(
+                    (enrollment) => enrollment.student_id
+                )
+            );
+
+            const result = (students || []).map((student) => ({
+                user_id: student.user_id,
+                full_name: student.full_name,
+                is_enrolled: enrolledStudentIds.has(student.user_id),
+            }));
+
+            return res.status(200).json({
+                success: true,
+                students: result,
+            });
+
+        } catch (error) {
+            console.error("Student listing error:", error.message);
+
+            return res.status(500).json({
+                success: false,
+                message: "Internal server error.",
+            });
+        }
+    }
+);
+
+/**
  * Enroll a student in a subject.
  * Only the teacher who owns the subject can enroll students.
  */
