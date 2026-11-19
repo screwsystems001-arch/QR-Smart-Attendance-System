@@ -27,6 +27,9 @@ export default function TeacherDashboard() {
     const [subjects, setSubjects] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [attendanceSessions, setAttendanceSessions] = useState(0);
+    const [enrolledStudents, setEnrolledStudents] = useState(0);
+    const [statsLoading, setStatsLoading] = useState(true);
 
     const [showSubjectForm, setShowSubjectForm] = useState(false);
     const [subjectName, setSubjectName] = useState("");
@@ -78,6 +81,39 @@ export default function TeacherDashboard() {
             setError(err.message || "Unable to load subjects.");
         } finally {
             setLoading(false);
+        }
+    }
+    async function fetchDashboardStats() {
+        try {
+            setStatsLoading(true);
+
+            const headers = await getAuthHeaders();
+
+            const response = await fetch(
+                `${API_BASE_URL}/subjects/stats`,
+                { headers }
+            );
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(
+                    result.message || "Unable to load dashboard statistics."
+                );
+            }
+
+            setAttendanceSessions(
+                result.stats.attendanceSessions ?? 0
+            );
+
+            setEnrolledStudents(
+                result.stats.enrolledStudents ?? 0
+            );
+
+        } catch (err) {
+            console.error("Dashboard statistics error:", err);
+        } finally {
+            setStatsLoading(false);
         }
     }
     const loadStudentsForSubject = async (subject) => {
@@ -185,6 +221,7 @@ export default function TeacherDashboard() {
 
     useEffect(() => {
         fetchSubjects();
+        fetchDashboardStats();
     }, []);
 
     async function handleAddSubject(e) {
@@ -273,13 +310,13 @@ export default function TeacherDashboard() {
 
                 <div className="teacher-stat-card">
                     <CalendarCheck size={25} />
-                    <h3>--</h3>
+                    <h3>{statsLoading ? "..." : attendanceSessions}</h3>
                     <p>Attendance Sessions</p>
                 </div>
 
                 <div className="teacher-stat-card">
                     <Users size={25} />
-                    <h3>--</h3>
+                    <h3>{statsLoading ? "..." : enrolledStudents}</h3>
                     <p>Enrolled Students</p>
                 </div>
             </section>

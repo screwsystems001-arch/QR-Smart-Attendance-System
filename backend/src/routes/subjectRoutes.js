@@ -132,6 +132,83 @@ router.get("/", authenticateUser, async (req, res) => {
     }
 });
 
+// Get dashboard statistics for the logged-in teacher.
+router.get(
+    "/stats",
+    authenticateUser,
+    requireRole("teacher"),
+    async (req, res) => {
+        try {
+            const teacherId = req.user.id;
+
+            // Get all subjects belonging to this teacher.
+            const { data: subjects, error: subjectError } =
+                await adminClient
+                    .from("subjects")
+                    .select("id")
+                    .eq("teacher_id", teacherId);
+
+            if (subjectError) {
+                throw subjectError;
+            }
+
+            const subjectIds = (subjects || []).map(
+                (subject) => subject.id
+            );
+
+            // Count attendance sessions created by this teacher.
+            const {
+                count: attendanceSessions,
+                error: sessionError
+            } = await adminClient
+                .from("attendance_sessions")
+                .select("id", { count: "exact", head: true })
+                .eq("teacher_id", teacherId);
+
+            if (sessionError) {
+                throw sessionError;
+            }
+
+            // Count unique enrolled students across all teacher subjects.
+            let enrolledStudents = 0;
+
+            if (subjectIds.length > 0) {
+                const { data: enrollments, error: enrollmentError } =
+                    await adminClient
+                        .from("enrollments")
+                        .select("student_id")
+                        .in("subject_id", subjectIds);
+
+                if (enrollmentError) {
+                    throw enrollmentError;
+                }
+
+                enrolledStudents = new Set(
+                    (enrollments || []).map(
+                        (enrollment) => enrollment.student_id
+                    )
+                ).size;
+            }
+
+            return res.status(200).json({
+                success: true,
+                stats: {
+                    attendanceSessions: attendanceSessions ?? 0,
+                    enrolledStudents
+                }
+            });
+
+        } catch (error) {
+            console.error("Dashboard statistics error:", error.message);
+
+            return res.status(500).json({
+                success: false,
+                message: "Could not retrieve dashboard statistics."
+            });
+        }
+    }
+);
+
 /**
  * Get all registered students and their enrollment status
  * for a subject. Only the subject's teacher can access this.
